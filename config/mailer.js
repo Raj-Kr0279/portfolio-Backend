@@ -1,18 +1,20 @@
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMP_PORT,           // 465 or 587
-  secure: process.env.SMTP_HOST === 'smtp.gmail.com' ? true : false,
   service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  connectionTimeout: 20_000,
+  greetingTimeout: 20_000,
+  socketTimeout: 20_000,
 });
-transporter.verify((err, success) => {
+
+// Avoid breaking app start if SMTP is unreachable at boot.
+transporter.verify((err) => {
   if (err) {
-    console.error("SMTP Error:", err);
+    console.error("SMTP verify failed (will still try on send):", err.message);
   } else {
     console.log("SMTP Ready");
   }

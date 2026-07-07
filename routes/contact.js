@@ -9,9 +9,6 @@ router.post("/", async (req, res) => {
     const contact = new Contact(req.body);
 
     await contact.save();
-    console.log("Saved.");
-
-console.log("Sending email...");
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER, // send to yourself
@@ -19,9 +16,8 @@ console.log("Sending email...");
       text: `Name: ${contact.name}
 Email: ${contact.email}
 Subject: ${contact.subject}
-Message: ${contact.message}`
+Message: ${contact.message}`,
     });
-    console.log("Email sent:", info);
     res.json({
       success: true,
       message: "Message received!",
